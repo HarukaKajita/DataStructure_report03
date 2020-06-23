@@ -5,75 +5,81 @@
 
 using namespace std;
 
+void exitFailedToOpen(string fileName) {
+    cerr << "failed to open " << fileName << endl;
+    exit(EXIT_FAILURE);
+}
+
 // 機能：引数として渡されたカテゴリが割り当てられているページのタイトルを検索する
 // 引数：カテゴリ名
 // 戻値：検索結果　タイトル１,タイトル2,...のような , で区切られた文字列
 
 string search_page(string query)
 {
-    ifstream f_data("data.txt");
+    //open file
+    string wikiFileName = "data.txt";
+    ifstream wikiData(wikiFileName);
+    if (!wikiData) exitFailedToOpen(wikiFileName);
 
-    string result = "";
+    string titles = "";
     string line;
 
     // data.txtから１行ずつ読み込み
-    while (f_data >> line)
+    while (wikiData >> line)
     {
         // 記事タイトルとカテゴリ（category1,category2,...）のデータに分割
-        int index = line.find(",");
-        string title = line.substr(0, index);
-        string c_str = line.substr(index + 1);
+        int commaIndex = line.find(",");
+        string title = line.substr(0, commaIndex);
+        string categories = line.substr(commaIndex + 1);
 
         // カテゴリ列のデータからカテゴリを１つずつ取り出し（split）
         int n = 0;
-        for (int i = 0; i <= c_str.length(); i = n + 1)
+        for (int i = 0; i <= categories.length(); i = n + 1)
         {
-            n = c_str.find_first_of(",", i);
+            n = categories.find_first_of(",", i);
             if (n == string::npos)
             {
-                n = c_str.length();
+                n = categories.length();
             }
 
-            string cw = c_str.substr(i, n - i);
+            string cw = categories.substr(i, n - i);
 
             if (query == cw)
             {
-                result += title + ",";
+                titles += title + ",";
             }
         }
     }
-    f_data.close();
+    wikiData.close();
 
-    return result;
+    return titles;
 }
 
 int main(int argc, char* argv[])
 {
-    ifstream fc_data("category.list");
-
-    if (!fc_data) {
-        cerr << "failed to open category.list" << endl;
-        return EXIT_FAILURE;
-    }
+    //open file
+    string categoryFileName = "category.list";
+    ifstream categoryData(categoryFileName);
+    if (!categoryData) exitFailedToOpen(categoryFileName);
 
     string result;
-    string line;
+    string category;
 
     // data.txtから１行ずつ読み込み
-    while (fc_data >> line)
+    while (categoryData >> category)
     {
-        cout << line << " -> ";
+        cout << category << " -> ";
 
-        string result = search_page(line);
+        string titles = search_page(category);
 
-        if (result != "")
+        if (titles != "")
         {
-            cout << result << endl;
+            cout << titles << endl;
         }
 
         cout << endl;
     }
-    fc_data.close();
+    categoryData.close();
 
     return 0;
 }
