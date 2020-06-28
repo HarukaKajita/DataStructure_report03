@@ -16,13 +16,12 @@ void exitFailedToOpen(string fileName) {
     exit(EXIT_FAILURE);
 }
 
-void setPages(HashManager& hashMAnager) {
+void setPages(HashManager& hashManager) {
     string wikiFileName = "data.txt";
     ifstream wikiData(wikiFileName);
     if (!wikiData) exitFailedToOpen(wikiFileName);
 
     string line;
-    int count = 1;
     while (wikiData >> line)
     {
         int commaIndex = line.find(",");
@@ -36,10 +35,8 @@ void setPages(HashManager& hashMAnager) {
             if (n == string::npos) n = categories.length();
             
             string category = categories.substr(i, n - i);
-            //cout << setw(6) << count << "：" << category << "：" << title << endl;
-            hashMAnager.addData(category, title);
+            hashManager.addData(category, title + ",");
         }
-        count++;
     }
     wikiData.close();
 }
@@ -79,7 +76,7 @@ int main(int argc, char* argv[])
     ifstream categoryData(categoryFileName);
     if (!categoryData) exitFailedToOpen(categoryFileName);
     string category;
-    HashManager hashManager = HashManager(100000);
+    HashManager hashManager = HashManager(10000);
     
     //ハッシュの構築
     cout << "ハッシュ構築開始" << endl;
@@ -94,17 +91,27 @@ int main(int argc, char* argv[])
     double time = static_cast<double>(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
     printf("time %lf[ms]\n", time);
     cout << "ハッシュ構築完了" << endl;
-    
-    categoryData.clear();
-    categoryData.seekg(0, ios_base::beg);
     //１カテゴリ->タイトル検索
+    //先頭末尾5件表示
+    vector<string> buffer;
     while (categoryData >> category)
+    {
+        string line = "";
+        line += category + " -> ";
+        line += hashManager.getTitles(category);
+        buffer.push_back(line);
+    }
+    for (size_t i = 0; i < 5; i++)cout << buffer.at(i) << endl;
+    for (size_t i = 0; i < 5; i++)cout << buffer.at(buffer.size()+i-5) << endl;
+    cout << endl;
+    //前件表示
+    /*while (categoryData >> category)
     {
         cout << category << " -> ";
         string titles = hashManager.getTitles(category);
         cout << titles << endl;
         cout << endl;
-    }
+    }*/
 
     //２頻度ソート
     cout << "カテゴリリスト構築開始" << endl;

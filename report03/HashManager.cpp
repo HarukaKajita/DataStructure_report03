@@ -38,9 +38,11 @@ void HashManager::addData(const string& category, const string& title) {
 	else {
 		//cout << node->getTitles() << "：" << node->getCategory() << "だよ！" << endl;;
 		//リストを走査しカテゴリを探す
-		string c = node->getCategory();
-		bool b = c != category;
-		while (node != NULL && b) {
+		while (node != NULL) {
+			string nodeCategory = node->getCategory();
+			bool isNotExist = nodeCategory != category;
+			if (!isNotExist) break;
+
 			Node* next = node->getNext();
 			//カテゴリがなければ追加する
 			if (next == NULL) {
@@ -50,6 +52,7 @@ void HashManager::addData(const string& category, const string& title) {
 				break;
 			}
 			node = next;
+
 		}
 	}
 	node->addTitle(title);

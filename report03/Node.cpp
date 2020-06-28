@@ -4,7 +4,7 @@ Node::Node(const string& category) {
 	this->category = category;
 }
 void Node::addTitle(const string& title) {
-	titles += title;
+	this->titles += title;
 	pageNum++;
 }
 const string Node::getCategory() {
