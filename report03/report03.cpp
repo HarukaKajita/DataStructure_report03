@@ -83,7 +83,16 @@ int main(int argc, char* argv[])
     
     //ハッシュの構築
     cout << "ハッシュ構築開始" << endl;
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
+
+    LARGE_INTEGER start, end;
+
+    QueryPerformanceCounter(&start);
     setPages(hashManager);
+    QueryPerformanceCounter(&end);
+    double time = static_cast<double>(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
+    printf("time %lf[ms]\n", time);
     cout << "ハッシュ構築完了" << endl;
     
     categoryData.clear();
@@ -111,17 +120,13 @@ int main(int argc, char* argv[])
     cout << "カテゴリリスト構築終了" << endl;
     cout << "カテゴリリストソート開始" << endl;
     // 時間計測
-    LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
-
-    LARGE_INTEGER start, end;
-
     QueryPerformanceCounter(&start);
     sortCategories(categories, 0, categories.size()-1);
     //sort(categories.begin(), categories.end());
     QueryPerformanceCounter(&end);
 
-    double time = static_cast<double>(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
+    time = static_cast<double>(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
     printf("time %lf[ms]\n", time);
     cout << "カテゴリリストソート終了" << endl;
 
