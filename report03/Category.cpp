@@ -4,9 +4,14 @@ Category::Category(const string category = "", const int pageNum = 0) {
 	this->category = category;
 	this->pageNum = pageNum;
 }
-string Category::getCategory() {
+const string Category::getCategory() {
 	return category;
 }
-int Category::getPageNum() {
+const int Category::getPageNum() {
 	return pageNum;
 }
+
+const bool Category::operator>(const Category& c) const { return this->pageNum > c.pageNum; }
+const bool Category::operator<(const Category& c) const { return this->pageNum < c.pageNum; }
+const bool Category::operator>=(const Category& c) const { return this->pageNum >= c.pageNum; }
+const bool Category::operator<=(const Category& c) const { return this->pageNum <= c.pageNum; }

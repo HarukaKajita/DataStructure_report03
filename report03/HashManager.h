@@ -8,11 +8,11 @@ using namespace std;
 class HashManager
 {
 	//key:category value:head
-	std::map<string, vector<string>*> headsDictionary;
+	map<string, vector<string>*> headsDictionary;
 
 public:
-	void addCategory(string category);
-	void addNode(string category, string title);
-	vector<string>* searchTitles(string category);
+	void addCategory(const string& category);
+	void addNode(const string& category, const string& title);
+	vector<string>* searchTitles(const string& category);
 };
 

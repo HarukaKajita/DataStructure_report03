@@ -1,6 +1,6 @@
 #include "HashManager.h"
 
-void HashManager::addCategory(string category) {
+void HashManager::addCategory(const string& category) {
 
 	if (!headsDictionary.count(category)) {
 		//add categoryHead if not exits
@@ -9,7 +9,7 @@ void HashManager::addCategory(string category) {
 	}
 }
 
-void HashManager::addNode(string category, string title) {
+void HashManager::addNode(const string& category, const string& title) {
 	
 	if (headsDictionary.count(category)) {
 		//add node to categoryList
@@ -23,7 +23,7 @@ void HashManager::addNode(string category, string title) {
 	}
 }
 
-vector<string>* HashManager::searchTitles(string category) {
+vector<string>* HashManager::searchTitles(const string& category) {
 	if (headsDictionary.count(category)) {
 		return headsDictionary.at(category);
 	}

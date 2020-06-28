@@ -2,7 +2,8 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string.h>
-
+#include <algorithm>
+#include <windows.h>
 #include "HashManager.h"
 #include "Category.h"
 
@@ -48,25 +49,15 @@ void exchangeCategories(Category* a, Category* b)
     *a = *b;
     *b = tmp;
 }
-
-void sortCategories(vector<Category> categories, int left, int right)
+void sortCategories(vector<Category>& categories, const int left, const int right)
 {
     int index1 = left;
     int index2 = right;
-    int x = categories[left].getPageNum();
-
+    Category x = categories[left];
     do
     {
-        while (categories[index1].getPageNum() < x)
-        {
-            index1++;
-        }
-
-        while (categories[index2].getPageNum() > x)
-        {
-            index2--;
-        }
-
+        while (categories.at(index1) > x) index1++;
+        while (categories.at(index2) < x) index2--;
         if (index1 <= index2)
         {
             exchangeCategories(&categories[index1], &categories[index2]);
@@ -75,15 +66,10 @@ void sortCategories(vector<Category> categories, int left, int right)
         }
     } while (index1 < index2);
 
-    if (left < index2) {
-        sortCategories(categories, left, index2);
-    }
-
-    if (index1 < right) {
-        sortCategories(categories, index1, right);
-    }
+    if (left < index2) exchangeCategories(&categories[left], &categories[index2]);
+    if (left < index2) sortCategories(categories, left, index2);
+    if (index1 < right) sortCategories(categories, index1, right);
 }
-
 
 int main(int argc, char* argv[])
 {
@@ -91,10 +77,9 @@ int main(int argc, char* argv[])
     string categoryFileName = "category.list";
     ifstream categoryData(categoryFileName);
     if (!categoryData) exitFailedToOpen(categoryFileName);
-    auto begin = categoryData.tellg();
     string category;
     HashManager hashManager;
-
+    
     //ハッシュの構築
     cout << "ハッシュ構築開始" << endl;
     while (categoryData >> category) hashManager.addCategory(category);
@@ -104,22 +89,24 @@ int main(int argc, char* argv[])
     categoryData.clear();
     categoryData.seekg(0, ios_base::beg);
     //１カテゴリ->タイトル検索
-    /*while (categoryData >> category)
+    while (categoryData >> category)
     {
         cout << category << " -> ";
 
         vector<string>* titles = hashManager.searchTitles(category);
         string result = "";
-        if (nodes != NULL) {
-            for(string n : *titles) titles += n;
+        if (titles != NULL) {
+            for(string n : *titles) result += n;
         }
         
         if (result != "") cout << result << endl;
         cout << endl;
-    }*/
+    }
 
     //２頻度ソート
     cout << "カテゴリリスト構築開始" << endl;
+    categoryData.clear();
+    categoryData.seekg(0, ios_base::beg);
     vector<Category> categories;
     while (categoryData >> category)
     {
@@ -127,12 +114,29 @@ int main(int argc, char* argv[])
         int pageNum = titles->size();
         categories.push_back(Category(category, pageNum));
     }
-    cout << "カテゴリリスト構築終了" << endl;
-    cout << "カテゴリリストソート開始" << endl;
-    sortCategories(categories, 0, categories.size());
-    cout << "カテゴリリストソート終了" << endl;
     categoryData.close();
 
+    cout << "カテゴリリスト構築終了" << endl;
+    cout << "カテゴリリストソート開始" << endl;
+    // QueryPerformanceCounter関数の1秒当たりのカウント数を取得する
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
+
+    LARGE_INTEGER start, end;
+
+    QueryPerformanceCounter(&start);
+    sortCategories(categories, 0, categories.size()-1);
+    //sort(categories.begin(), categories.end());
+    QueryPerformanceCounter(&end);
+
+    double time = static_cast<double>(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
+    printf("time %lf[ms]\n", time);
+    cout << "カテゴリリストソート終了" << endl;
+
+    for(int i = 0; i < 10; i++)
+    cout << categories.at(i).getCategory() << "：" << categories.at(i).getPageNum() << endl;
+    
+    
     return 0;
 }
 
