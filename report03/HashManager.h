@@ -1,18 +1,23 @@
 #pragma once
 
-#include <vector>
-#include <map>
+#include <iostream>
 #include <string>
+#include "Node.h"
 using namespace std;
 
 class HashManager
 {
 	//key:category value:head
-	map<string, vector<string>*> headsDictionary;
-
+	//map<string, vector<string>*> headsDictionary;
+	int size;
+	Node** table;
+	int getHash(const string& key, const int& size);
+	Node* searchNode(const string& category);
 public:
-	void addCategory(const string& category);
-	void addNode(const string& category, const string& title);
-	vector<string>* searchTitles(const string& category);
+	HashManager(const int& size);
+	HashManager();
+	void addData(const string& category, const string& title);
+	string getTitles(const string& category);
+	const int getPageNum(const string& category);
 };
 

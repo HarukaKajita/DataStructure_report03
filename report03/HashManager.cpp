@@ -1,31 +1,68 @@
 #include "HashManager.h"
 
-void HashManager::addCategory(const string& category) {
-
-	if (!headsDictionary.count(category)) {
-		//add categoryHead if not exits
-		vector<string>* newList = new vector<string>();
-		headsDictionary.emplace(category, newList);
-	}
+HashManager::HashManager(const int& size) {
+	this->size = size;
+	table = new Node * [size];
+	for (int i = 0; i < size; i++)table[i] = NULL;
+	//cout << "init HashManager" << sizeof(table) / sizeof(Node*) << endl;
+}
+HashManager::HashManager() {
+	this->size = 1000;
+	table = new Node * [size];
+	for (int i = 0; i < size; i++)table[i] = NULL;
+	//cout << "init HashManager" << sizeof(table) / sizeof(Node*) << endl;
+}
+int HashManager::getHash(const string& key, const int& size)
+{
+	unsigned int v = 0;
+	for (int i = 0; i < key.length(); i++) v += key[i] * pow(2, i);
+	return v % size;
+}
+Node* HashManager::searchNode(const string& category) {
+	int hashValue = getHash(category, size);
+	Node* node = table[hashValue];
+	//リストを走査しカテゴリを探す
+	while (node != NULL && node->getCategory() != category) node = node->getNext();
+	//なければNULLを返す
+	return node;
 }
 
-void HashManager::addNode(const string& category, const string& title) {
-	
-	if (headsDictionary.count(category)) {
-		//add node to categoryList
-		headsDictionary.at(category)->push_back(title);
+void HashManager::addData(const string& category, const string& title) {
+	const int hashValue = getHash(category, size);
+	Node* node = table[hashValue];
+	if (node == NULL) {
+		//cout << "NULLだよ！" << endl;
+		table[hashValue] = new Node(category);
+		node = table[hashValue];
 	}
 	else {
-		//add categoryHead if not exits
-		vector<string>* newList = new vector<string>();
-		newList->push_back(title);
-		headsDictionary.emplace(category, newList);
+		//cout << node->getTitles() << "：" << node->getCategory() << "だよ！" << endl;;
+		//リストを走査しカテゴリを探す
+		while (node != NULL && node->getCategory() != category) {
+			Node* next = node->getNext();
+			//カテゴリがなければ追加する
+			if (next == NULL) {
+				Node* newNode = new Node(category);
+				node->setNext(newNode);
+				node = newNode;
+				break;
+			}
+			node = next;
+		}
 	}
+	node->addTitle(title);
 }
 
-vector<string>* HashManager::searchTitles(const string& category) {
-	if (headsDictionary.count(category)) {
-		return headsDictionary.at(category);
-	}
-	else return NULL;
+string HashManager::getTitles(const string& category) {
+	int hashValue = getHash(category, size);
+	Node* node = searchNode(category);
+	if (node == NULL) return "";
+	return node->getTitles();
+}
+
+const int HashManager::getPageNum(const string& category) {
+	int hashValue = getHash(category, size);
+	Node* node = searchNode(category);
+	if (node == NULL) return 0;
+	return node->getPageNum();
 }

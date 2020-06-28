@@ -1,7 +1,9 @@
 ﻿#include <iostream>
+#include <iomanip>
 #include <fstream>
+#include <vector>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <algorithm>
 #include <windows.h>
 #include "HashManager.h"
@@ -20,25 +22,24 @@ void setPages(HashManager& hashMAnager) {
     if (!wikiData) exitFailedToOpen(wikiFileName);
 
     string line;
-
+    int count = 1;
     while (wikiData >> line)
     {
         int commaIndex = line.find(",");
-        string title = line.substr(0, commaIndex);
+        string title = line.substr(1, commaIndex-2);
         string categories = line.substr(commaIndex + 1);
 
         int n = 0;
         for (int i = 0; i <= categories.length(); i = n + 1)
         {
             n = categories.find_first_of(",", i);
-            if (n == string::npos)
-            {
-                n = categories.length();
-            }
-
+            if (n == string::npos) n = categories.length();
+            
             string category = categories.substr(i, n - i);
-            hashMAnager.addNode(category, title);
+            //cout << setw(6) << count << "：" << category << "：" << title << endl;
+            hashMAnager.addData(category, title);
         }
+        count++;
     }
     wikiData.close();
 }
@@ -78,11 +79,10 @@ int main(int argc, char* argv[])
     ifstream categoryData(categoryFileName);
     if (!categoryData) exitFailedToOpen(categoryFileName);
     string category;
-    HashManager hashManager;
+    HashManager hashManager = HashManager(100000);
     
     //ハッシュの構築
     cout << "ハッシュ構築開始" << endl;
-    while (categoryData >> category) hashManager.addCategory(category);
     setPages(hashManager);
     cout << "ハッシュ構築完了" << endl;
     
@@ -92,14 +92,8 @@ int main(int argc, char* argv[])
     while (categoryData >> category)
     {
         cout << category << " -> ";
-
-        vector<string>* titles = hashManager.searchTitles(category);
-        string result = "";
-        if (titles != NULL) {
-            for(string n : *titles) result += n;
-        }
-        
-        if (result != "") cout << result << endl;
+        string titles = hashManager.getTitles(category);
+        cout << titles << endl;
         cout << endl;
     }
 
@@ -110,15 +104,13 @@ int main(int argc, char* argv[])
     vector<Category> categories;
     while (categoryData >> category)
     {
-        vector<string>* titles = hashManager.searchTitles(category);
-        int pageNum = titles->size();
+        int pageNum = hashManager.getPageNum(category);
         categories.push_back(Category(category, pageNum));
     }
     categoryData.close();
-
     cout << "カテゴリリスト構築終了" << endl;
     cout << "カテゴリリストソート開始" << endl;
-    // QueryPerformanceCounter関数の1秒当たりのカウント数を取得する
+    // 時間計測
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
 
