@@ -71,3 +71,10 @@ const int HashManager::getPageNum(const string& category) {
 	if (node == NULL) return 0;
 	return node->getPageNum();
 }
+
+const int HashManager::getTableSize() {
+	return size;
+}
+Node* HashManager::getListAt(const int& index) {
+	return table[index];
+}

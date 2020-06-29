@@ -19,5 +19,6 @@ public:
 	void addData(const string& category, const string& title);
 	string getTitles(const string& category);
 	const int getPageNum(const string& category);
+	const int getTableSize();
+	Node* getListAt(const int& index);
 };
-

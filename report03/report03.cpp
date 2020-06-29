@@ -115,15 +115,20 @@ int main(int argc, char* argv[])
 
     //２頻度ソート
     cout << "カテゴリリスト構築開始" << endl;
-    categoryData.clear();
-    categoryData.seekg(0, ios_base::beg);
     vector<Category> categories;
-    while (categoryData >> category)
+    const int tableSize = hashManager.getTableSize();
+    for (size_t i = 0; i < tableSize; i++)
     {
-        int pageNum = hashManager.getPageNum(category);
-        categories.push_back(Category(category, pageNum));
+        //こっちのほうが高速だけどリストを変えられる危険性がある。
+        //アルゴリズムとデータ構造の授業なので高速化を選択。
+        Node* node = hashManager.getListAt(i);
+        while (node != NULL) {
+            string category = node->getCategory();
+            int pageNum = node->getPageNum();
+            categories.push_back(Category(category, pageNum));
+            node = node->getNext();
+        }
     }
-    categoryData.close();
     cout << "カテゴリリスト構築終了" << endl;
     cout << "カテゴリリストソート開始" << endl;
     // 時間計測
