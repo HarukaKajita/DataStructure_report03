@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void exitFailedToOpen(string fileName) {
+void exitFailedToOpen(const string& fileName) {
     cerr << "failed to open " << fileName << endl;
     exit(EXIT_FAILURE);
 }
@@ -47,7 +47,7 @@ void exchangeCategories(Category* a, Category* b)
     *a = *b;
     *b = tmp;
 }
-void sortCategories(vector<Category>& categories, const int left, const int right)
+void sortCategories(vector<Category>& categories, const int& left, const int& right)
 {
     int index1 = left;
     int index2 = right;
@@ -119,12 +119,10 @@ int main(int argc, char* argv[])
     const int tableSize = hashManager.getTableSize();
     for (size_t i = 0; i < tableSize; i++)
     {
-        //こっちのほうが高速だけどリストを変えられる危険性がある。
-        //アルゴリズムとデータ構造の授業なので高速化を選択。
-        Node* node = hashManager.getListAt(i);
+        const Node* node = hashManager.getListAt(i);
         while (node != NULL) {
-            string category = node->getCategory();
-            int pageNum = node->getPageNum();
+            const string category = node->getCategory();
+            const int pageNum = node->getPageNum();
             categories.push_back(Category(category, pageNum));
             node = node->getNext();
         }

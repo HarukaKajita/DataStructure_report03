@@ -10,16 +10,15 @@ HashManager::HashManager() {
 	this->size = 1000;
 	table = new Node * [size];
 	for (int i = 0; i < size; i++)table[i] = NULL;
-	//cout << "init HashManager" << sizeof(table) / sizeof(Node*) << endl;
 }
-int HashManager::getHash(const string& key, const int& size)
+int HashManager::getHash(const string& key) const
 {
 	unsigned int v = 0;
 	for (int i = 0; i < key.length(); i++) v += key[i] * pow(2, i);
 	return v % size;
 }
-Node* HashManager::searchNode(const string& category) {
-	int hashValue = getHash(category, size);
+Node* HashManager::searchNode(const string& category) const {
+	int hashValue = getHash(category);
 	Node* node = table[hashValue];
 	//リストを走査しカテゴリを探す
 	while (node != NULL && node->getCategory() != category) node = node->getNext();
@@ -28,15 +27,13 @@ Node* HashManager::searchNode(const string& category) {
 }
 
 void HashManager::addData(const string& category, const string& title) {
-	const int hashValue = getHash(category, size);
+	const int hashValue = getHash(category);
 	Node* node = table[hashValue];
 	if (node == NULL) {
-		//cout << "NULLだよ！" << endl;
 		table[hashValue] = new Node(category);
 		node = table[hashValue];
 	}
 	else {
-		//cout << node->getTitles() << "：" << node->getCategory() << "だよ！" << endl;;
 		//リストを走査しカテゴリを探す
 		while (node != NULL) {
 			string nodeCategory = node->getCategory();
@@ -58,23 +55,23 @@ void HashManager::addData(const string& category, const string& title) {
 	node->addTitle(title);
 }
 
-string HashManager::getTitles(const string& category) {
-	int hashValue = getHash(category, size);
+string HashManager::getTitles(const string& category) const {
+	int hashValue = getHash(category);
 	Node* node = searchNode(category);
 	if (node == NULL) return "";
 	return node->getTitles();
 }
 
-const int HashManager::getPageNum(const string& category) {
-	int hashValue = getHash(category, size);
+const int HashManager::getPageNum(const string& category) const {
+	int hashValue = getHash(category);
 	Node* node = searchNode(category);
 	if (node == NULL) return 0;
 	return node->getPageNum();
 }
 
-const int HashManager::getTableSize() {
+const int HashManager::getTableSize() const {
 	return size;
 }
-Node* HashManager::getListAt(const int& index) {
+const Node* HashManager::getListAt(const int& index) const {
 	return table[index];
 }

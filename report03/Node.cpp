@@ -7,16 +7,16 @@ void Node::addTitle(const string& title) {
 	this->titles += title;
 	pageNum++;
 }
-const string Node::getCategory() {
+const string Node::getCategory() const {
 	return category;
 }
-const string Node::getTitles() {
+const string Node::getTitles() const {
 	return titles;
 }
-const int Node::getPageNum() {
+const int Node::getPageNum() const {
 	return pageNum;
 }
-Node* Node::getNext() {
+Node* const Node::getNext() const {
 	return next;
 }
 void Node::setNext(Node* node) {

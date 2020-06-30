@@ -11,14 +11,14 @@ class HashManager
 	//map<string, vector<string>*> headsDictionary;
 	int size;
 	Node** table;
-	int getHash(const string& key, const int& size);
-	Node* searchNode(const string& category);
+	int getHash(const string& key) const;
+	Node* searchNode(const string& category) const;
 public:
 	HashManager(const int& size);
 	HashManager();
 	void addData(const string& category, const string& title);
-	string getTitles(const string& category);
-	const int getPageNum(const string& category);
-	const int getTableSize();
-	Node* getListAt(const int& index);
+	string getTitles(const string& category) const;
+	const int getPageNum(const string& category) const;
+	const int getTableSize() const;
+	const Node* getListAt(const int& index) const;
 };
