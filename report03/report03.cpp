@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     for (size_t i = 0; i < 5; i++)cout << buffer.at(i) << endl;
     for (size_t i = 0; i < 5; i++)cout << buffer.at(buffer.size()+i-5) << endl;
     cout << endl;
-    //前件表示
+    //全件表示
     /*while (categoryData >> category)
     {
         cout << category << " -> ";
