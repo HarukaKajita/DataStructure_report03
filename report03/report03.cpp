@@ -92,7 +92,9 @@ int main(int argc, char* argv[])
     printf("time %lf[ms]\n", time);
     cout << "ハッシュ構築完了" << endl;
     //１カテゴリ->タイトル検索
+    
     //先頭末尾5件表示
+    /*
     vector<string> buffer;
     while (categoryData >> category)
     {
@@ -102,16 +104,19 @@ int main(int argc, char* argv[])
         buffer.push_back(line);
     }
     for (size_t i = 0; i < 5; i++)cout << buffer.at(i) << endl;
+    cout << endl;
     for (size_t i = 0; i < 5; i++)cout << buffer.at(buffer.size()+i-5) << endl;
     cout << endl;
+    */
+
     //全件表示
-    /*while (categoryData >> category)
+    while (categoryData >> category)
     {
         cout << category << " -> ";
         string titles = hashManager.getTitles(category);
         cout << titles << endl;
         cout << endl;
-    }*/
+    }
 
     //２頻度ソート
     cout << "カテゴリリスト構築開始" << endl;
@@ -128,20 +133,24 @@ int main(int argc, char* argv[])
         }
     }
     cout << "カテゴリリスト構築終了" << endl;
+
     cout << "カテゴリリストソート開始" << endl;
     // 時間計測
     QueryPerformanceFrequency(&freq);
     QueryPerformanceCounter(&start);
     sortCategories(categories, 0, categories.size()-1);
-    //sort(categories.begin(), categories.end());
     QueryPerformanceCounter(&end);
-
     time = static_cast<double>(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
     printf("time %lf[ms]\n", time);
     cout << "カテゴリリストソート終了" << endl;
 
-    for(int i = 0; i < 10; i++)
-    cout << categories.at(i).getCategory() << "：" << categories.at(i).getPageNum() << endl;
+    //全件表示
+    for (int i = 0; i < categories.size(); i++)
+        cout << categories.at(i).getCategory() << "：" << categories.at(i).getPageNum() << endl;
+
+    //上位10件表示
+    //for (int i = 0; i < 10; i++)
+    //  cout << categories.at(i).getCategory() << "：" << categories.at(i).getPageNum() << endl;
     
     
     return 0;
